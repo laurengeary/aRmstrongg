@@ -1,0 +1,36 @@
+---
+title: "Module 7 Project"
+author: "aRmstrong"
+date: "2023-10-30"
+output: html_document
+bibliogrphy: "BIOL3140.bib"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(tidyverse)
+library(MuMIn)
+```
+
+## Introduction
+Guiding questions: 
+Can angle-force measurements predict force-length (FL) relationships in the flexors of the human upper arm?
+Does eccentric fatigue shift the FL relationship of human forearm flexors?
+Do class-wide force-angle data for isometric MVC accord to a typical FL relationship both under control and fatigued conditions?
+Is there a significant shift between θmax between the control and fatigue FL relationships?
+
+## Methods
+  The group began by constructing a low-cost load-cell force DAQ system. With this we measured the force of isometric MVCs for 30 seconds at 12 different angles that were determined using a handmade ganiometer. Then we eccentrically fatigue biceps by repeatedly performing iso-kinetic controlled drops with a heavy book bag for 3 minutes. After resting for 2 minutes we remeasured the force of isometric MVCs at the same 12 angles using the same procedure. We performed this on each of the three group members. 
+  After inserting our data from our Arduino sketch into a class directory, we read in the class data and calculated normalized values. We fit different polynomial models to our normalized data and then used AIC to find the best fitting model. Using the model we were able to find the Fmax and θmax. By comparing the two θmax between our two data sets, we were able to determine if there was a significant shift between θmax between the control and fatigue FL relationships.
+
+## Results
+
+```{r}
+
+```
+
+## Discussion
+## Author Contributions
+Elisabeth: Contructed the ganiometer, inserted the necessary code chunks, wrote up the methods and author contributions
+## References
