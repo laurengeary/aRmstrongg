@@ -15,11 +15,7 @@ library(MuMIn)
 
 
 ## Introduction
-Guiding questions: 
-Can angle-force measurements predict force-length (FL) relationships in the flexors of the human upper arm?
-Does eccentric fatigue shift the FL relationship of human forearm flexors?
-Do class-wide force-angle data for isometric MVC accord to a typical FL relationship both under control and fatigued conditions?
-Is there a significant shift between θmax between the control and fatigue FL relationships?
+In this study, we will study the force length relationship of the human upper limb and its response to fatigue. To determine the relationship, measurements will be taken before the upper limb muscles are not fatigued and then after they are fatigued. More specifically, we will see the effects of eccentric fatigue, where a muscle is under stress/tension while lengthening. Research conducted by Simon and Ella Yeung on the changes in the quadriceps muscle following eccentric fatigue shows that “there was a significant shift in the peak torque angle to longer muscle lengths in the eccentrically-exercised leg immediately and on the following two days after exercise when compared with baseline” (Yeung and Yeung 2008). We will apply this concept to determine if eccentric fatigue shifts the force length relationship of human forearm flexors. We will then analyze class-wide force-angle data for isometric MVC and see if it follows a typical force length relationship both under control and fatigue conditions. Finally, we will analyze if there is a significant shift between θmax between the control and fatigue FL relationships.
 
 ## Methods
   The group began by constructing a low-cost load-cell force DAQ system. With this we measured the force of isometric MVCs for 30 seconds at 12 different angles that were determined using a handmade ganiometer. Then we eccentrically fatigue biceps by repeatedly performing iso-kinetic controlled drops with a heavy book bag for 3 minutes. After resting for 2 minutes we remeasured the force of isometric MVCs at the same 12 angles using the same procedure. We performed this on each of the three group members. 
