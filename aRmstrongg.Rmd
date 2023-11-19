@@ -70,10 +70,30 @@ max_force_each_experiment <- max_force_each_recording %>%
   summarize(max_force_all = max(max_force, na.rm = TRUE))
 
 # Norm Force = maximum force for each recording/maximum force (Fmax) across all angles for each experiment
-Force_norm_data <- max_force_each_recording %>%
+Final_data_table <- max_force_each_recording %>%
   left_join(max_force_each_experiment, by = c("team", "subject", "condition")) %>%
   mutate(max_force_norm = max_force / max_force_all)
 ```
+
+```{r}
+AICs <- Final_data_table%>%
+  group_by(subject,condition)%>%
+  summarize(
+    m2=AICc(lm(max_force_norm~poly(angle,2))), #second order
+    m3=AICc(lm(max_force_norm~poly(angle,3))), #third order
+    m4=AICc(lm(max_force_norm~poly(angle,4))) #fourth order
+  )%>%
+  pivot_longer(m2:m4,names_to="model",values_to="AICc")%>%
+  print()
+```
+
+
+
+
+
+
+
+
 
 ```{r}
 ang <- seq(45,168.75,length.out = 12) #elbow angle
