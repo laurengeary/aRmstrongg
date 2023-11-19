@@ -52,10 +52,12 @@ for (file in new_data_files) {
 all_data <- bind_rows(empty_list)
 
 
-#Modifying table so that absolute values are listed
+#Modifying table so that absolute values are listed. Filtering data that was identified as an issue later in experiment. When creating models, received Error that the degree must be less than number of unique points.Found that "letacianna" and "leticianna" had less unique points than the degree being used for the polynomial
 
 all_data <- all_data %>% 
-  mutate(force = abs(all_data$force))
+  mutate(force = abs(all_data$force)) %>% 
+  filter(subject != "letacianna") %>% 
+  filter(subject != "leticianna")
 ```
 
 ```{r}
@@ -76,20 +78,6 @@ Final_data_table <- max_force_each_recording %>%
 ```
 
 ```{r}
-#Getting Error about the degree must be less than number of unique point. At this point used the following code to check for unique points. Found that "letacianna" had less unique points than the degree being used for the polynomial
-
-unique_points <- Final_data_table %>%
-  group_by(subject, condition) %>%
-  summarize(unique_points = n_distinct(angle))
-
-
-print(unique_points)
-
-#Decided to filter data under "letiacianna"
-
-Final_data_table <- Final_data_table %>%
-  filter(subject != "letiacianna")
-
 AICs <- Final_data_table%>%
   group_by(subject,condition)%>%
   summarize(
@@ -101,7 +89,6 @@ AICs <- Final_data_table%>%
   print()
 
 x.pred <- seq(45,157.5,length.out = 1000) #define 1000 angles from our range
-
 
 fits <- Final_data_table %>%
   group_by(subject, condition) %>%
@@ -130,6 +117,7 @@ anova(lm(theta_max~condition,best.models))
 
 #Calculate the mean shift with SEM. 
 best.models%>%
+  na.omit() %>% 
   pivot_wider(id_cols=subject,names_from = condition,values_from=theta_max)%>%
   mutate(shift=fatigue-control)%>%
   ungroup()%>%
