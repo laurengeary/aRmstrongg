@@ -28,6 +28,32 @@ Is there a significant shift between θmax between the control and fatigue FL re
 ## Results
 
 ```{r}
+new_data_files <- list.files("new_data", pattern = ".csv", full.names=TRUE)
+
+empty_list <- list()
+
+
+for (file in new_data_files) {
+  data <- read_csv(file)
+  data_columns <- str_split(str_remove(file, "\\.csv"), "_")[[1]]
+  data <- data %>%
+    mutate(
+      team = data_columns[2],
+      subject = data_columns[3],
+      condition = data_columns[4],
+      angle = as.numeric(data_columns[5])
+    )
+  
+  empty_list[[file]] <- data
+}
+
+all_data <- bind_rows(empty_list)
+```
+
+```{r}
+
+
+
 ang <- seq(45,168.75,length.out = 12) #elbow angle
 
 normF <- c(0.71, 0.77, 0.83, 0.91, 0.97, 1.00, 0.96, 0.94, 0.89, 0.84, 0.77, 0.74) #you'll get this by reading in data and calculating normalized values
@@ -159,6 +185,11 @@ best.models%>%
 ```
 
 ## Discussion
+
+
+
+
+
 
 ## Author Contributions
 After Lauren obtained the necessary hardware, the team met up outside of class to construct the DAQ system and perform the experiment trials. 
