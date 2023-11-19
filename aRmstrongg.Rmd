@@ -76,6 +76,20 @@ Final_data_table <- max_force_each_recording %>%
 ```
 
 ```{r}
+#Getting Error about the degree must be less than number of unique point. At this point used the following code to check for unique points. Found that "letacianna" had less unique points than the degree being used for the polynomial
+
+unique_points <- Final_data_table %>%
+  group_by(subject, condition) %>%
+  summarize(unique_points = n_distinct(angle))
+
+
+print(unique_points)
+
+#Decided to filter data under "letiacianna"
+
+Final_data_table <- Final_data_table %>%
+  filter(subject != "letiacianna")
+
 AICs <- Final_data_table%>%
   group_by(subject,condition)%>%
   summarize(
@@ -85,153 +99,45 @@ AICs <- Final_data_table%>%
   )%>%
   pivot_longer(m2:m4,names_to="model",values_to="AICc")%>%
   print()
-```
-
-
-
-
-
-
-
-
-
-```{r}
-ang <- seq(45,168.75,length.out = 12) #elbow angle
-
-normF <- c(0.71, 0.77, 0.83, 0.91, 0.97, 1.00, 0.96, 0.94, 0.89, 0.84, 0.77, 0.74) #you'll get this by reading in data and calculating normalized values
-
-qplot(ang,normF)+
-  geom_point(aes(x=ang[which.max(normF)],
-                 y=normF[which.max(normF)]),
-             col="red",size=4)
-
-#finding the peak, not visually though. we are obtaining 20 angles
-
-ang[which.max(normF)] #Find angle for Fmax, theta_max
-
-
-# fit a polynomial curve to the graph
-
-poly.m2 <- lm(normF~poly(ang,2)) #second order polynomia
-poly.m3 <- lm(normF~poly(ang,3)) #third order
-poly.m4 <- lm(normF~poly(ang,4)) #fourth order
-
-#to find the best model , choose lowest AIC score
-
-AICc(poly.m2,poly.m3,poly.m4) #the second order model fits best
 
 x.pred <- seq(45,157.5,length.out = 1000) #define 1000 angles from our range
 
-normF.pred <- predict(poly.m4,newdata = data.frame(ang=x.pred)) #predict the force using 1000 angles
 
-qplot(ang,normF)+
-  geom_point(aes(x=x.pred,y=normF.pred),col="red")+
-  geom_point(aes(x=x.pred[which.max(normF.pred)],
-                 y=normF.pred[which.max(normF.pred)]),
-             size=5,col="blue")
-
-x.pred[which.max(normF.pred)] #theta_max
-
-
-#detect shifts in Fmax with respect to angle. If we had two data sets, one control and one produced after fatigue, we merely need to compare the two θmax.
-#the shift in angle for Fmax predicted by two polynomial models.
-
-normF.fat <- c(0.65, 0.71, 0.81, 0.89,0.92, 0.96, 0.99, 1, 0.96, 0.92, 0.84, 0.77) #fatigue data, you'll get this by reading in data and calculating normalized values
-
-
-qplot(ang,normF.fat)+
-  geom_point(aes(x=ang[which.max(normF.fat)],
-                 y=normF.fat[which.max(normF.fat)]),
-             col="red",size=4)
-
-ang[which.max(normF.fat)] #Find angle for Fmax for fatigue data
-
-poly.m2.fat <- lm(normF.fat~poly(ang,2)) #second order
-poly.m3.fat <- lm(normF.fat~poly(ang,3)) #third order
-poly.m4.fat <- lm(normF.fat~poly(ang,4)) #fourth order
-
-AICc(poly.m2.fat,poly.m3.fat,poly.m4.fat) #the second order model fits best
-
-normF.pred.fat <- predict(poly.m2.fat,newdata = data.frame(ang=x.pred)) #predict the force using 1000 angles
-
-qplot(ang,normF)+geom_point(aes(x=x.pred,y=normF.pred.fat),col="red")+geom_point(aes(x=x.pred[which.max(normF.pred.fat)],y=normF.pred.fat[which.max(normF.pred.fat)]),size=5,col="blue")
-
-x.pred[which.max(normF.pred.fat)]-x.pred[which.max(normF.pred)] #shift in angle for Fmax, theta_max
-
-
-set.seed(1234) #to keep random noise the same
-
-sub <- 1:10 #ten subjects
-dat.l <- list() #empty list
-
-#loop to run through subjects and simulate data based on noise added to data above
-for(i in sub){
-  noise <- rnorm(length(ang),mean = 0.02,sd = 0.01)
-  noise2 <- rnorm(length(ang),mean = 0.02,sd = 0.01)
-  dat.l[[i]] <- tibble(
-    rbind(
-      data.frame(ang,force=normF+noise,subject=i,exp="control"),
-      data.frame(ang,force=normF.fat+noise2,subject=i,exp="fatigue")
-    )  
-  )%>%
-    group_by(subject,exp)%>%
-    mutate(force=force/max(force))
-  
-}
-
-dat <- do.call(rbind,dat.l) #get data into one tibble
-
-dat%>%
-  ggplot(aes(ang,force,col=exp))+geom_point()
-
-
-AICs <- dat%>%
-  group_by(subject,exp)%>%
+fits <- Final_data_table %>%
+  group_by(subject, condition) %>%
   summarize(
-    m2=AICc(lm(force~poly(ang,2))), #second order
-    m3=AICc(lm(force~poly(ang,3))), #third order
-    m4=AICc(lm(force~poly(ang,4))) #fourth order
-  )%>%
-  pivot_longer(m2:m4,names_to="model",values_to="AICc")%>%
-  print()
-
-fits <- dat%>%
-  group_by(subject,exp)%>%
-  summarize(
-    m2=predict(lm(force~poly(ang,2)),newdata=data.frame(ang=x.pred)), #second order
-    m3=predict(lm(force~poly(ang,3)),newdata=data.frame(ang=x.pred)), #third order
-    m4=predict(lm(force~poly(ang,4)),newdata=data.frame(ang=x.pred)) #fourth order
-  )%>%
-  pivot_longer(m2:m4,names_to="model")%>%
-  group_by(subject,exp,model)%>%
-  summarize(theta_max=x.pred[which.max(value)])%>%
+    m2 = predict(lm(max_force_norm ~ poly(angle, 2)), newdata = data.frame(angle = x.pred)),
+    m3 = predict(lm(max_force_norm ~ poly(angle, 3)), newdata = data.frame(angle = x.pred)),
+    m4 = predict(lm(max_force_norm ~ poly(angle, 4)), newdata = data.frame(angle = x.pred))
+  ) %>%
+  pivot_longer(cols = c(m2, m3, m4), names_to = "model") %>%
+  group_by(subject, condition, model) %>%
+  summarize(theta_max = x.pred[which.max(value)]) %>%
   print()
 
 
+#Joining AICs and Fits
 best.models <- fits%>%
   left_join(AICs)%>%
-  group_by(subject,exp)%>%
+  group_by(subject,condition)%>%
   mutate(best=AICc==min(AICc))%>%
   filter(best==TRUE)%>%
   dplyr::select(-best)%>%
   print()
 
-anova(lm(theta_max~exp,best.models))
+#Determining whether a shift if θ max is different between the control and fatigue experiments
+anova(lm(theta_max~condition,best.models))
 
-
+#Calculate the mean shift with SEM. 
 best.models%>%
-  pivot_wider(id_cols=subject,names_from = exp,values_from=theta_max)%>%
+  pivot_wider(id_cols=subject,names_from = condition,values_from=theta_max)%>%
   mutate(shift=fatigue-control)%>%
   ungroup()%>%
   summarise(mean.shift=mean(shift),se.shift=sd(shift)/sqrt(length(shift)))
 ```
 
+
 ## Discussion
-
-
-
-
-
 
 ## Author Contributions
 After Lauren obtained the necessary hardware, the team met up outside of class to construct the DAQ system and perform the experiment trials. 
