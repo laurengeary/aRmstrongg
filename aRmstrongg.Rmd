@@ -142,7 +142,7 @@ best.models%>%
 ## Author Contributions
 After Lauren obtained the necessary hardware, the team met up outside of class to construct the DAQ system and perform the experiment trials. 
 Elisabeth: Contructed the ganiometer, inserted the necessary code chunks, wrote up the methods and author contributions
-Phillip constructed the DAQ system,
+Phillip constructed the DAQ system, wrote the code. 
 Lauren crafted the introduction, 
 
 ## References
