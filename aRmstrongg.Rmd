@@ -28,6 +28,8 @@ Is there a significant shift between θmax between the control and fatigue FL re
 ## Results
 
 ```{r}
+
+#Loading in all the data 
 new_data_files <- list.files("new_data", pattern = ".csv", full.names=TRUE)
 
 empty_list <- list()
@@ -48,12 +50,32 @@ for (file in new_data_files) {
 }
 
 all_data <- bind_rows(empty_list)
+
+
+#Modifying table so that absolute values are listed
+
+all_data <- all_data %>% 
+  mutate(force = abs(all_data$force))
 ```
 
 ```{r}
+#Find maximum force for each recording
+max_force_each_recording <- all_data %>%
+  group_by(team, subject, condition, angle) %>%
+  summarize(max_force = max(force, na.rm = TRUE))
 
+#Find maximum force (Fmax) across all angles for each experiment (control or fatigued) for each individual
+max_force_each_experiment <- max_force_each_recording %>%
+  group_by(team, subject, condition) %>%
+  summarize(max_force_all = max(max_force, na.rm = TRUE))
 
+# Norm Force = maximum force for each recording/maximum force (Fmax) across all angles for each experiment
+Force_norm_data <- max_force_each_recording %>%
+  left_join(max_force_each_experiment, by = c("team", "subject", "condition")) %>%
+  mutate(max_force_norm = max_force / max_force_all)
+```
 
+```{r}
 ang <- seq(45,168.75,length.out = 12) #elbow angle
 
 normF <- c(0.71, 0.77, 0.83, 0.91, 0.97, 1.00, 0.96, 0.94, 0.89, 0.84, 0.77, 0.74) #you'll get this by reading in data and calculating normalized values
