@@ -23,11 +23,11 @@ Is there a significant shift between θmax between the control and fatigue FL re
 
 ## Methods
   The group began by constructing a low-cost load-cell force DAQ system. With this we measured the force of isometric MVCs for ~15 seconds at 12 different angles that were determined using a handmade ganiometer. Then we eccentrically fatigue biceps by repeatedly performing iso-kinetic controlled drops with a heavy book bag for 3 minutes. After resting for 2 minutes we remeasured the force of isometric MVCs at the same 12 angles using the same procedure. We performed this on each of the three group members. 
-  After inserting our data from our Arduino sketch into a class directory, we read in the class data and calculated normalized values. We fit different polynomial models to our normalized data and then used AICs to find the best fitting model. Using the model we were able to find the Fmax and θmax. By comparing the two θmax between our two data sets, we were able to determine if there was a significant shift between θmax between the control and fatigue FL relationships.
+  After inserting our data from our Arduino sketch into a class directory, we read in the class data and calculated normalized values. We fit different polynomial models to our normalized data and then used AICs to find the best fitting model. Using the model we were able to find the Fmax and θmax. By comparing the two θmax between our two data sets, we were able to determine if there was a significant shift between θ max between the control and fatigue FL relationships.
 
 ## Results
 
-```{r}
+```{r, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 
 #Loading in all the data 
 new_data_files <- list.files("new_data", pattern = ".csv", full.names=TRUE)
@@ -57,10 +57,11 @@ all_data <- bind_rows(empty_list)
 all_data <- all_data %>% 
   mutate(force = abs(all_data$force)) %>% 
   filter(subject != "letacianna") %>% 
-  filter(subject != "leticianna")
+  filter(subject != "leticianna") %>% 
+  filter(subject != "letiacianna")
 ```
 
-```{r}
+```{r, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 #Find maximum force for each recording
 max_force_each_recording <- all_data %>%
   group_by(team, subject, condition, angle) %>%
@@ -77,7 +78,7 @@ Final_data_table <- max_force_each_recording %>%
   mutate(max_force_norm = max_force / max_force_all)
 ```
 
-```{r}
+```{r, message=FALSE, warning=FALSE, echo=FALSE, results='hide'}
 AICs <- Final_data_table%>%
   group_by(subject,condition)%>%
   summarize(
@@ -102,7 +103,6 @@ fits <- Final_data_table %>%
   summarize(theta_max = x.pred[which.max(value)]) %>%
   print()
 
-
 #Joining AICs and Fits
 best.models <- fits%>%
   left_join(AICs)%>%
@@ -111,7 +111,10 @@ best.models <- fits%>%
   filter(best==TRUE)%>%
   dplyr::select(-best)%>%
   print()
+```
 
+
+```{r, Final Analysis}
 #Determining whether a shift if θ max is different between the control and fatigue experiments
 anova(lm(theta_max~condition,best.models))
 
@@ -126,6 +129,8 @@ best.models%>%
 
 
 ## Discussion
+
+The P value of the anova test is 0.006778 which is < 0.05. This suggests that there is a statistically significant difference in the theta_max value between the control and fatigue conditions. Using the best models, the mean.shift and se.shift was calculated. The mean.shift calculated was 20.20721 and the standard error was 6.844911. This indicates that the theta_max is shifted 20.20721 units greater in the fatigue condition than in the control condition. 
 
 ## Author Contributions
 After Lauren obtained the necessary hardware, the team met up outside of class to construct the DAQ system and perform the experiment trials. 
