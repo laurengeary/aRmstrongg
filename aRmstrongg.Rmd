@@ -15,7 +15,7 @@ library(MuMIn)
 
 
 ## Introduction
-In this study, we will study the force length relationship of the human upper limb and its response to fatigue. To determine the relationship, measurements will be taken before the upper limb muscles are not fatigued and then after they are fatigued. More specifically, we will see the effects of eccentric fatigue, where a muscle is under stress/tension while lengthening. Research on the changes in the quadriceps muscle following eccentric fatigue shows that “there was a significant shift in the peak torque angle to longer muscle lengths in the eccentrically-exercised leg immediately and on the following two days after exercise when compared with baseline” [@yeung2007shift]. We will apply this concept to determine if eccentric fatigue shifts the force length relationship of human forearm flexors. We will then analyze class-wide force-angle data for isometric MVC and see if it follows a typical force length relationship both under control and fatigue conditions. Finally, we will analyze if there is a significant shift between θmax between the control and fatigue FL relationships. 
+To determine the effect of length on human forearm flexor force generation and how fatigue affects the force length (FL) relationship, maximum force measurements at 12 angles will be taken before the upper limb muscles are fatigued (control condition) and then after they are fatigued (fatigued condition). Previous research on the changes in the quadriceps muscle following eccentric fatigue shows that “there was a significant shift in the peak torque angle to longer muscle lengths in the eccentrically-exercised leg immediately and on the following two days after exercise when compared with baseline” [@yeung2007shift].This relationship was also reported in @butterfield2005force which found “eccentric exercise has been shown to have a measurable effect on the force–length relationship (FLR), as peak force is shifted to longer muscle lengths following exercise.” We will apply this concept to determine if eccentric fatigue shifts the force length relationship of human forearm flexors. We will then analyze class-wide force-angle data for isometric MVC and see if it follows a typical force length relationship both under control and fatigue conditions. Finally, we will analyze the data to see if there is a significant shift in θ max between the control and fatigue FL relationships. 
 
 ## Methods
   The group began by constructing a low-cost load-cell force DAQ system. With this we measured the force of isometric MVCs for ~15 seconds at 12 different angles that were determined using a handmade ganiometer. Then we eccentrically fatigue biceps by repeatedly performing iso-kinetic controlled drops with a heavy book bag for 3 minutes. After resting for 2 minutes we remeasured the force of isometric MVCs at the same 12 angles using the same procedure. We performed this on each of the three group members. 
@@ -111,10 +111,10 @@ best.models <- fits%>%
 
 
 ```{r, Final Analysis}
-#Determining whether a shift if θ max is different between the control and fatigue experiments
+#Determining whether there is a statistically significant difference in θ max between the control and fatigue conditions
 anova(lm(theta_max~condition,best.models))
 
-#Calculate the mean shift with SEM. 
+#Calculate the mean shift in θ max with SEM. 
 best.models%>%
   na.omit() %>% 
   pivot_wider(id_cols=subject,names_from = condition,values_from=theta_max)%>%
@@ -132,12 +132,10 @@ Final_data_table %>%
 
 ## Discussion
 
-The P value of the anova test is 0.006778 which is < 0.05. This suggests that there is a statistically significant difference in the theta_max value between the control and fatigue conditions. Using the best models, the mean.shift and se.shift was calculated. The mean.shift calculated was 20.20721 and the standard error was 6.844911. This indicates that the theta_max is shifted 20.20721 units greater in the fatigue condition than in the control condition. This is consistent with the findings of @yeung2007shift in which the peak torque angle of the quadricep increased following exertion compared to the control (not-fatigued) condition. 
+The P value of the anova test is 0.006778 which is < 0.05. This suggests that there is a statistically significant difference in the theta_max value between the control and fatigue conditions. Using the best models, the mean.shift and se.shift was calculated. The mean.shift calculated was 20.20721 and the standard error was 6.844911. This indicates that the theta_max is shifted 20.20721 degrees greater in the fatigue condition than in the control condition. The graph of the normalized maximum forces vs angle for both the control and fatigue condition follows the expected isometric force-angle curvature illustrated in the Module 7 tutorial using simulated data. In addition, the graph indicates that the fatigue curve peak is right shifted compared to the control curve peak as expected. These findings are consistent with the findings of @yeung2007shift and @butterfield2005force that the peak torque angle increases following fatigue of the muscle. A seperate study found that eccentric exercise was "accompanied by a shift in optimum angle for torque generation" which offers further support to the results of the class data analysis as well as the other studies referenced [@whitehead2001changes]. @yeung2007shift suggests that the shift in optimum angle for force generation may be a "protective strategy" against injury. 
+
 
 ## Author Contributions
-After Lauren obtained the necessary hardware, the team met up outside of class to construct the DAQ system and perform the experiment trials. 
-Elisabeth: Contructed the ganiometer, inserted the necessary code chunks, wrote up the methods and author contributions
-Phillip constructed the DAQ system, wrote the code. 
-Lauren crafted the introduction, 
+After Lauren obtained the necessary hardware, the team met up outside of class to construct the DAQ system and perform the experiment trials. We needed to meet up a second time as the first time we were unable to get the hardware to read the data correctly. Elisabeth constructed the ganiometer, inserted the necessary code chunks, and wrote up the methods and author contribution. Lauren crafted the introduction, and found the references. Phillip constructed the DAQ system, rewrote the code, and verbalized the results in the discussion section. 
 
 ## References
